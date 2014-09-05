@@ -27,14 +27,14 @@ our $VERSION = '0.01';
 
 my $tid = Math::Util::CalculatedValue->new({
             name        => 'time_in_days',
-            description => 'Bet duration in days',
+            description => 'Duration in days',
             set_by      => 'Contract',
             base_amount => 0,
     });
 
 my $tiy = Math::Util::CalculatedValue->new({
             name        => 'time_in_years',
-            description => 'Bet duration in years',
+            description => 'Duration in years',
             set_by      => 'Contract',
             base_amount => 1,
     });
