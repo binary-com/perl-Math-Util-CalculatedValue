@@ -4,11 +4,7 @@ perl:
     - "5.16"
     - "5.14"
     - "5.12"
-services:
-    - redis-server
 before_install:
-    - "cpanm JSON"
-    - "cpanm DateTime"
     - "cpanm Test::More"
     - "cpanm Test::NoWarnings"
     - "cpanm Test::Exception"
