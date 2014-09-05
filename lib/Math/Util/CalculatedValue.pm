@@ -5,7 +5,7 @@ use strict;
 use warnings FATAL => 'all';
 
 use Carp qw(confess);
-use List::Util qw(min max first);
+use List::Util qw(min max);
 
 =head1 NAME
 
@@ -25,33 +25,31 @@ our $VERSION = '0.01';
 
 =head1 SYNOPSIS
 
-my $tid = Math::Util::CalculatedValue->new({
-            name        => 'time_in_days',
-            description => 'Duration in days',
-            set_by      => 'Contract',
-            base_amount => 0,
+    my $tid = Math::Util::CalculatedValue->new({
+        name        => 'time_in_days',
+        description => 'Duration in days',
+        set_by      => 'Contract',
+        base_amount => 0,
     });
 
-my $tiy = Math::Util::CalculatedValue->new({
-            name        => 'time_in_years',
-            description => 'Duration in years',
-            set_by      => 'Contract',
-            base_amount => 1,
+    my $tiy = Math::Util::CalculatedValue->new({
+        name        => 'time_in_years',
+        description => 'Duration in years',
+        set_by      => 'Contract',
+        base_amount => 1,
     });
 
-my $dpy = Math::Util::CalculatedValue->new({
-            name        => 'days_per_year',
-            description => 'days in a year',
-            set_by      => 'Contract',
-            base_amount => 365,
+    my $dpy = Math::Util::CalculatedValue->new({
+        name        => 'days_per_year',
+        description => 'days in a year',
+        set_by      => 'Contract',
+        base_amount => 365,
     });
 
+    $tid->include_adjustment('reset', $tiy);
+    $tid->include_adjustment('multiply', $dpy);
 
-$tid->include_adjustment('reset', $tiy);
-$tid->include_adjustment('multiply', $dpy);
-
-print $tid->amount; # 365
-
+    print $tid->amount;
 
 =head1 ATTRIBUTES
 
@@ -117,7 +115,7 @@ The minimum value for amount
 =cut
 
 sub minimum {
-    my($self) = @_;
+    my ($self) = @_;
     return $self->{'minimum'};
 }
 
@@ -128,20 +126,20 @@ The maximum value for amount
 =cut
 
 sub maximum {
-    my($self) = @_;
+    my ($self) = @_;
     return $self->{'maximum'};
 }
 
 my %available_adjustments = (
-    'add'      => sub { my ($this, $prev) = @_; return $prev + $this->amount; },
-    'multiply' => sub { my ($this, $prev) = @_; return $prev * $this->amount; },
-    'subtract' => sub { my ($this, $prev) = @_; return $prev - $this->amount; },
-    'divide'   => sub { my ($this, $prev) = @_; return $prev / $this->amount; },
-    'reset'    => sub { my ($this, $prev) = @_; return $this->amount; },
-    'exp'      => sub { my ($this, $prev) = @_; return exp($this->amount); },
-    'log'      => sub { my ($this, $prev) = @_; return log($this->amount); },
-    'info'     => sub { my ($this, $prev) = @_; return $prev; },
-    'absolute' => sub { my ($this, $prev) = @_; return abs($this->amount); },
+    'add'       => sub { my ( $this, $prev ) = @_; return $prev + $this->amount; },
+    'multiply'  => sub { my ( $this, $prev ) = @_; return $prev * $this->amount; },
+    'subtract'  => sub { my ( $this, $prev ) = @_; return $prev - $this->amount; },
+    'divide'    => sub { my ( $this, $prev ) = @_; return $prev / $this->amount; },
+    'reset'     => sub { my ( $this, $prev ) = @_; return $this->amount; },
+    'exp'       => sub { my ( $this, $prev ) = @_; return exp( $this->amount ); },
+    'log'       => sub { my ( $this, $prev ) = @_; return log( $this->amount ); },
+    'info'      => sub { my ( $this, $prev ) = @_; return $prev; },
+    'absolute'  => sub { my ( $this, $prev ) = @_; return abs( $this->amount ); },
 );
 
 =head1 Methods
@@ -156,20 +154,20 @@ sub new {
     my $class = shift;
     my %params_ref = ref( $_[0] ) ? %{ $_[0] } : @_;
 
-    foreach my $required ('name','description','set_by') {
+    foreach my $required ( 'name', 'description', 'set_by' ) {
         confess "missing required $required parameter"
-        unless $params_ref{$required};
+          unless $params_ref{$required};
     }
 
-    my $self = \%params_ref;
+    my $self    = \%params_ref;
     my $minimum = $self->{'minimum'};
     my $maximum = $self->{'maximum'};
 
-    confess "Provided maximum [$maximum] is less than the provided minimum [$minimum]"
-      if (
-          defined $minimum
-          and defined $maximum
-          and $maximum < $minimum);
+    confess
+      "Provided maximum [$maximum] is less than the provided minimum [$minimum]"
+      if (  defined $minimum
+        and defined $maximum
+        and $maximum < $minimum );
     $self->{validation_methods} = [qw(_validate_all_sub_adjustments)];
 
     my $obj = bless $self, $class;
@@ -186,12 +184,12 @@ sub amount {
     my $self = shift;
 
     my $value = $self->_verified_cached_value;
-    if (not defined $value) {
+    if ( not defined $value ) {
         $value = $self->_apply_all_adjustments;
         my $min = $self->{'minimum'};
-        $value = max($min, $value) if (defined $min);
+        $value = max( $min, $value ) if ( defined $min );
         my $max = $self->{'maximum'};
-        $value = min($max, $value) if (defined $max);
+        $value = min( $max, $value ) if ( defined $max );
 
         $self->{_cached_amount} = $value;
     }
@@ -206,7 +204,7 @@ The ordered adjustments (if any) applied to arrive at the final value.
 =cut
 
 sub adjustments {
-    my($self) = @_;
+    my ($self) = @_;
     return $self->{'_adjustments'} || [];
 }
 
@@ -217,15 +215,20 @@ Creates the ordered adjustments as per the operation.
 =cut
 
 sub include_adjustment {
-    my ($self, $operation, $adjustment) = @_;
+    my ( $self, $operation, $adjustment ) = @_;
 
-    confess 'Operation [' . $operation . '] is not supported by ' . __PACKAGE__ unless ($available_adjustments{$operation});
+    confess 'Operation [' . $operation . '] is not supported by ' . __PACKAGE__
+      unless ( $available_adjustments{$operation} );
     my $adj_type = ref $adjustment;
-    confess 'Supplied adjustment must be of type ' . __PACKAGE__ . ' got [' . $adj_type . ']' unless ($adj_type eq __PACKAGE__);
+    confess 'Supplied adjustment must be of type '
+      . __PACKAGE__
+      . ' got ['
+      . $adj_type . ']'
+      unless ( $adj_type eq __PACKAGE__ );
 
     delete $self->{_cached_amount};
     my $adjustments = $self->{'_adjustments'} || [];
-    push @{$adjustments}, [$operation, $adjustment];
+    push @{$adjustments}, [ $operation, $adjustment ];
     $self->{'_adjustments'} = $adjustments;
 }
 
@@ -240,14 +243,14 @@ THis can be extremely dangerous, so make sure you know where and why you are doi
 =cut
 
 sub exclude_adjustment {
-    my ($self, $adj_name) = @_;
+    my ( $self, $adj_name ) = @_;
 
     my $excluded = 0;
 
-    foreach my $sub_adj (@{$self->adjustments}) {
+    foreach my $sub_adj ( @{ $self->adjustments } ) {
         my $obj = $sub_adj->[1];
         $excluded += $obj->exclude_adjustment($adj_name);
-        if ($obj->name eq $adj_name) {
+        if ( $obj->name eq $adj_name ) {
             $sub_adj->[0] = 'info';
             $excluded++;
         }
@@ -267,16 +270,18 @@ Returns the number of instances replaced.
 =cut
 
 sub replace_adjustment {
-    my ($self, $replacement) = @_;
+    my ( $self, $replacement ) = @_;
 
-    confess 'Replacement is not a CalculatedValue' unless ((ref $replacement) =~ /Math::Util::CalculatedValue/);
+    confess 'Replacement is not a CalculatedValue'
+      unless ( ( ref $replacement ) =~ /Math::Util::CalculatedValue/ );
 
     my $replaced = 0;
 
-    foreach my $sub_adj (@{$self->adjustments}) {
+    foreach my $sub_adj ( @{ $self->adjustments } ) {
         my $obj = $sub_adj->[1];
-        $replaced += $obj->replace_adjustment($replacement) if ($obj != $replacement);
-        if ($obj->name eq $replacement->name) {
+        $replaced += $obj->replace_adjustment($replacement)
+          if ( $obj != $replacement );
+        if ( $obj->name eq $replacement->name ) {
             $sub_adj->[1] = $replacement;
             $replaced++;
         }
@@ -292,8 +297,10 @@ sub _apply_all_adjustments {
     my ($self) = @_;
     my $value       = $self->{'base_amount'}  || 0;
     my $adjustments = $self->{'_adjustments'} || [];
-    foreach my $adjustment (@{$adjustments}) {
-        $value = $available_adjustments{$adjustment->[0]}->($adjustment->[1], $value);
+    foreach my $adjustment ( @{$adjustments} ) {
+        $value =
+          $available_adjustments{ $adjustment->[0] }
+          ->( $adjustment->[1], $value );
     }
     return $value;
 }
@@ -301,11 +308,11 @@ sub _apply_all_adjustments {
 sub _verified_cached_value {
     my ($self) = @_;
     my $can;
-    if (exists $self->{_cached_amount}) {
+    if ( exists $self->{_cached_amount} ) {
         $can = $self->{_cached_amount};
         my $adjustments = $self->{'_adjustments'} || [];
-        foreach my $adjustment (@{$adjustments}) {
-            if (not defined $adjustment->[-1]->_verified_cached_value) {
+        foreach my $adjustment ( @{$adjustments} ) {
+            if ( not defined $adjustment->[-1]->_verified_cached_value ) {
                 delete $self->{_cached_amount};
                 $can = undef;
                 last;
@@ -322,17 +329,18 @@ Peek at an included adjustment by name.
 =cut
 
 sub peek {
-    my ($self, $adj_name) = @_;
+    my ( $self, $adj_name ) = @_;
 
     my $picked;
 
-    if ($self->name eq $adj_name) {
+    if ( $self->name eq $adj_name ) {
         $picked = $self;
-    } else {
-        # Depth first traversal.  We assume that if there are two things named the same
-        # in any given CV that they are, in fact, the same value.  So we can just return the first one we find.
+    }
+    else {
+# Depth first traversal.  We assume that if there are two things named the same
+# in any given CV that they are, in fact, the same value.  So we can just return the first one we find.
         my $adjustments = $self->{'_adjustments'} || [];
-        foreach my $sub_adj (@{$adjustments}) {
+        foreach my $sub_adj ( @{$adjustments} ) {
             my $obj = $sub_adj->[1];
             $picked = $obj->peek($adj_name);
             last if $picked;
@@ -349,7 +357,7 @@ Peek at the value of an included adjustment by name.
 =cut
 
 sub peek_amount {
-    my ($self, $adj_name) = @_;
+    my ( $self, $adj_name ) = @_;
     my $adj = $self->peek($adj_name);
     return ($adj) ? $adj->amount : undef;
 }
@@ -359,13 +367,12 @@ sub _validate_all_sub_adjustments {
 
     my @errors;
     my $adjustments = $self->{'_adjustments'} || [];
-    foreach my $cv (map { $_->[1] } @{$adjustments}) {
-        push @errors, $cv->all_errors unless ($cv->confirm_validity);
+    foreach my $cv ( map { $_->[1] } @{$adjustments} ) {
+        push @errors, $cv->all_errors unless ( $cv->confirm_validity );
     }
 
     return @errors;
 }
-
 
 =head1 AUTHOR
 
@@ -376,8 +383,6 @@ binary.com, C<< <rakesh at binary.com> >>
 Please report any bugs or feature requests to C<bug-math-util-calculatedvalue at rt.cpan.org>, or through
 the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Math-Util-CalculatedValue>.  I will be notified, and then you'll
 automatically be notified of progress on your bug as I make changes.
-
-
 
 
 =head1 SUPPORT
@@ -456,4 +461,4 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 =cut
 
-1; # End of Math::Util::CalculatedValue
+1;    # End of Math::Util::CalculatedValue

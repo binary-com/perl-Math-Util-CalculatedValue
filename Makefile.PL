@@ -19,7 +19,7 @@ WriteMakefile(
         'ExtUtils::MakeMaker' => 0,
     },
     BUILD_REQUIRES => {
-        'List::Util'       => 0
+        'List::Util'       => 0,
         'Test::More'       => 0.96,
         'Test::Exception'  => 0,
         'Test::NoWarnings' => 0,
