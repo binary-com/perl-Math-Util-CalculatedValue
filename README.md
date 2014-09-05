@@ -1,4 +1,4 @@
-**Math::Util::CalculatedValue** - RedisDB based cache system
+**Math::Util::CalculatedValue** - 
 Represents an adjustment to a value (which can contain additional adjustments).
 
 [![Build Status](https://travis-ci.org/binary-com/perl-Math-Util-CalculatedValue.svg?branch=master)](https://travis-ci.org/binary-com/perl-Math-Util-CalculatedValue)
