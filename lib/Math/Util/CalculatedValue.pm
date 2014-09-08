@@ -362,18 +362,6 @@ sub peek_amount {
     return ($adj) ? $adj->amount : undef;
 }
 
-sub _validate_all_sub_adjustments {
-    my ($self) = @_;
-
-    my @errors;
-    my $adjustments = $self->{'_adjustments'} || [];
-    foreach my $cv ( map { $_->[1] } @{$adjustments} ) {
-        push @errors, $cv->all_errors unless ( $cv->confirm_validity );
-    }
-
-    return @errors;
-}
-
 =head1 AUTHOR
 
 binary.com, C<< <rakesh at binary.com> >>

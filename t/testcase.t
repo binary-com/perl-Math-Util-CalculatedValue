@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 47;
+use Test::More tests => 50;
 use Test::NoWarnings;
 use Test::Exception;
 
@@ -217,4 +217,28 @@ is($cv->amount, -2, 'Test for add with negative result');
 
 $cv->include_adjustment('absolute', $cv_neg);
 is($cv->amount, 12, 'Test for absolute');
+
+my $x = Math::Util::CalculatedValue->new({
+        name        => $name . ' 1',
+        description => $desc,
+        set_by      => $set_by,
+});
+is($x->base_amount, 0, 'Test for default base_amount');
+
+throws_ok { 
+    Math::Util::CalculatedValue->new({
+            description => $desc,
+            set_by      => $set_by,
+    });
+} qr/missing required/,
+
+throws_ok { 
+    Math::Util::CalculatedValue->new({
+            name        => 'test',
+            description => $desc,
+            set_by      => $set_by,
+            minimum     => 20,
+            maximum     => 10
+    });
+} qr/Provided maximum \[10\] is less than the provided minimum \[20\]/,
 
