@@ -7,7 +7,7 @@ use Test::Exception;
 
 use Math::Util::CalculatedValue;
 
-my $name     = 'test';
+my $name     = 'Math::Util::CalculatedValue-';
 my $desc     = 'Ran for Test';
 my $set_by   = 'Test::More';
 my $base_amt = 10;
@@ -173,7 +173,7 @@ subtest 'cache invalidation' => sub {
 };
 
 $cv = Math::Util::CalculatedValue->new({
-        name        => $name,
+        name        => $name . '5',
         description => $desc,
         set_by      => $set_by,
         base_amount => $base_amt,
@@ -194,7 +194,7 @@ $cv->include_adjustment('log', $cv_op);
 is($cv->amount, 50, 'Test for log minimum');
 
 $cv = Math::Util::CalculatedValue->new({
-        name        => $name,
+        name        => $name . '6',
         description => $desc,
         set_by      => $set_by,
         base_amount => $base_amt,
@@ -203,7 +203,7 @@ $cv = Math::Util::CalculatedValue->new({
 	metadata    => 'wow'
 });
 
-is($cv->name, $name, 'Test for name');
+is($cv->name, $name . '6', 'Test for name');
 is($cv->description, $desc, 'Test for description');
 is($cv->minimum, -100, 'Test for minimum');
 is($cv->maximum, 100, 'Test for maximum');
@@ -230,7 +230,7 @@ throws_ok {
             description => $desc,
             set_by      => $set_by,
     });
-} qr/missing required/,
+} qr/missing required/, 'Missing Required Params';
 
 throws_ok { 
     Math::Util::CalculatedValue->new({
@@ -240,5 +240,5 @@ throws_ok {
             minimum     => 20,
             maximum     => 10
     });
-} qr/Provided maximum \[10\] is less than the provided minimum \[20\]/,
+} qr/Provided maximum \[10\] is less than the provided minimum \[20\]/, 'Mim, Max Check';
 
