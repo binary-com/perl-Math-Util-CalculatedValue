@@ -65,16 +65,16 @@ $cv->include_adjustment('divide', $cv_op);
 is($cv->amount, 1, 'Test for divide');
 
 $cv->include_adjustment('exp', $cv_op);
-is($cv->amount, 22026.4657948067, 'Test for exp');
+is( sprintf("%.3f", $cv->amount), 22026.466, 'Test for exp');
 
 $cv->include_adjustment('reset', $cv_op);
 is($cv->amount, 10, 'Test for reset');
 
 $cv->include_adjustment('log', $cv_op);
-is($cv->amount, 2.30258509299405, 'Test for log');
+is( sprintf("%.3f", $cv->amount), 2.303, 'Test for log');
 
 $cv->include_adjustment('info', $cv_op);
-is($cv->amount, 2.30258509299405, 'Test for info');
+is( sprintf("%.3f",$cv->amount), 2.303, 'Test for info');
 
 my $applied_wrong = Math::Util::CalculatedValue->new({
         name        => $name . '_fake',
@@ -85,11 +85,11 @@ my $applied_wrong = Math::Util::CalculatedValue->new({
 
 throws_ok { $cv->include_adjustment('dance', $applied_wrong) } qr/Operation \[dance\] is not supported/,
   'Throws exception when applying with a non-existent operation';
-is($cv->amount,                       2.30258509299405, '...which leaves the current value unchanged');
+is( sprintf("%.3f", $cv->amount), 2.303, '...which leaves the current value unchanged');
 is($cv->peek_amount($name . '_fake'), undef,            '...and does not appear in the stack.');
 throws_ok { $cv->include_adjustment('multiply', 2) } qr/Supplied adjustment must be of type Math::Util::CalculatedValue/,
   'Throws exception when applying a non CalculatedValue';
-is($cv->amount, 2.30258509299405, '...which leaves the current value unchanged.');
+is( sprintf("%.3f", $cv->amount), 2.303, '...which leaves the current value unchanged.');
 
 my $excl_calc = Math::Util::CalculatedValue->new({
         name        => 'exclusion',
@@ -106,16 +106,16 @@ my $excl_repl = Math::Util::CalculatedValue->new({
 });
 
 $cv_op->include_adjustment('multiply', $excl_calc);
-is($cv->amount,                         4.60517018598809, 'Adjusting a sub adjustment changes the value wildly');
+is( sprintf("%.3f", $cv->amount), 4.605, 'Adjusting a sub adjustment changes the value wildly');
 is($cv->replace_adjustment($excl_repl), 10,               'Able to replace the value we just added');
-is($cv->amount,                         6.90775527898214, '...which changes the value wildly');
+is( sprintf("%.3f", $cv->amount), 6.908, '...which changes the value wildly');
 is($cv->replace_adjustment($excl_calc), 10,               'Can switch all ten back');
-is($cv->amount,                         4.60517018598809, '...which puts it back to its previous crazy value.');
+is( sprintf("%.3f", $cv->amount), 4.605, '...which puts it back to its previous crazy value.');
 throws_ok { $cv->replace_adjustment('exclusion') } qr/Replacement is not a CalculatedValue/,
   'Trying to replace with a nonCV does not replace anything';
 
 is($cv->exclude_adjustment($excl_calc->name), 10,               'Exclude all 10 applications TO second object');
-is($cv->amount,                               2.30258509299405, '...which puts the value back as it was');
+is( sprintf("%.3f", $cv->amount),             2.303, '...which puts the value back as it was');
 is($cv->exclude_adjustment($cv_op->name),     10,               'Exclude all 10 applications OF second object');
 is($cv->amount,                               $cv->base_amount, '...which resets the first object to its base value');
 is($cv->exclude_adjustment($excl_calc->name), 10,               'Can still exclude all 10 applications TO second object again');
