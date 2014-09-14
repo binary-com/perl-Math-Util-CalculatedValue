@@ -230,7 +230,7 @@ throws_ok {
             description => $desc,
             set_by      => $set_by,
     });
-} qr/missing required/, 'Missing Required Params';
+} qr/Attribute .* is required/, 'Missing Required Params';
 
 throws_ok { 
     Math::Util::CalculatedValue->new({
