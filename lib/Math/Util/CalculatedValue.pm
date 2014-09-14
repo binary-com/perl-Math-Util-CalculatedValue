@@ -13,7 +13,7 @@ Math::Util::CalculatedValue - math adjustment, which can containe another adjust
 
 =head1 VERSION
 
-Version 0.02
+Version 0.03
 
 =head1 DESCRIPTION
 
@@ -21,7 +21,7 @@ Represents an adjustment to a value (which can contain additional adjustments).
 
 =cut
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 =head1 SYNOPSIS
 
@@ -155,7 +155,7 @@ sub new {
     my %params_ref = ref( $_[0] ) ? %{ $_[0] } : @_;
 
     foreach my $required ( 'name', 'description', 'set_by' ) {
-        confess "missing required $required parameter"
+        confess "Attribute $required is required"
           unless $params_ref{$required};
     }
 
@@ -246,8 +246,8 @@ sub exclude_adjustment {
     my ( $self, $adj_name ) = @_;
 
     my $excluded = 0;
-
-    foreach my $sub_adj ( @{ $self->adjustments } ) {
+    my $adjustments = $self->{'_adjustments'} || [];
+    foreach my $sub_adj ( @{ $adjustments } ) {
         my $obj = $sub_adj->[1];
         $excluded += $obj->exclude_adjustment($adj_name);
         if ( $obj->name eq $adj_name ) {
@@ -279,8 +279,8 @@ sub replace_adjustment {
         if !$replacement->{calculatedValue};
 
     my $replaced = 0;
-
-    foreach my $sub_adj ( @{ $self->adjustments } ) {
+    my $adjustments = $self->{'_adjustments'} || [];
+    foreach my $sub_adj ( @{ $adjustments } ) {
         my $obj = $sub_adj->[1];
         $replaced += $obj->replace_adjustment($replacement)
           if ( $obj != $replacement );
