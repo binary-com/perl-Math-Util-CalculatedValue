@@ -169,8 +169,10 @@ sub new {
         and defined $maximum
         and $maximum < $minimum );
 
-    $self->{validation_methods} = [qw(_validate_all_sub_adjustments)];
-    $self->{calculatedValue} = 1;
+    $self->{'validation_methods'} = [qw(_validate_all_sub_adjustments)];
+    $self->{'_validation_errors'} = [];
+    $self->{'_init_errors'}       = [];
+    $self->{'calculatedValue'}    = 1;
 
     my $obj = bless $self, $class;
     return $obj;
