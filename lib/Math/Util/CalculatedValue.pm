@@ -221,9 +221,9 @@ sub include_adjustment {
 
     confess 'Operation [' . $operation . '] is not supported by ' . __PACKAGE__
       unless ( $available_adjustments{$operation} );
-    confess 'Supplied adjustment must be of type ' . __PACKAGE__
+    confess 'Supplied adjustment must be type of ' . __PACKAGE__
       if !ref($adjustment);
-    confess 'Supplied adjustment must be of type ' . __PACKAGE__
+    confess 'Supplied adjustment must be type of' . __PACKAGE__
       if !$adjustment->{calculatedValue};
 
     delete $self->{_cached_amount};
@@ -272,10 +272,10 @@ Returns the number of instances replaced.
 sub replace_adjustment {
     my ( $self, $replacement ) = @_;
 
-    confess 'Replacement is not a CalculatedValue'
+    confess 'Supplied replacement must be type of '. __PACKAGE__
         if !ref($replacement);
 
-    confess 'Replacement is not a CalculatedValue'
+    confess 'Supplied replacement must be type of' . __PACKAGE__
         if !$replacement->{calculatedValue};
 
     my $replaced = 0;
