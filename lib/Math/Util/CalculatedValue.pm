@@ -13,7 +13,7 @@ Math::Util::CalculatedValue - math adjustment, which can containe another adjust
 
 =head1 VERSION
 
-Version 0.03
+Version 0.04
 
 =head1 DESCRIPTION
 
@@ -21,7 +21,7 @@ Represents an adjustment to a value (which can contain additional adjustments).
 
 =cut
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 =head1 SYNOPSIS
 
