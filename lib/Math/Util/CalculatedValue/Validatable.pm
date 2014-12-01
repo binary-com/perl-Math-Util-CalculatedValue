@@ -163,4 +163,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 no Moose;
 
+__PACKAGE__->meta->make_immutable;
+
 1;    # End of Math::Util::CalculatedValue::Validatable
