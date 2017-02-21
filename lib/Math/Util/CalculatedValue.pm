@@ -146,7 +146,7 @@ New instance method
 
 =cut
 
-sub new {
+sub new { ## no critic (ArgUnpacking)
     my $class = shift;
     my %params_ref = ref( $_[0] ) ? %{ $_[0] } : @_;
 
@@ -225,6 +225,7 @@ sub include_adjustment {
     my $adjustments = $self->{'_adjustments'} || [];
     push @{$adjustments}, [ $operation, $adjustment ];
     $self->{'_adjustments'} = $adjustments;
+    return;
 }
 
 =head2 exclude_adjustment
