@@ -224,8 +224,7 @@ sub include_adjustment {
     delete $self->{_cached_amount};
     my $adjustments = $self->{'_adjustments'} || [];
     push @{$adjustments}, [ $operation, $adjustment ];
-    $self->{'_adjustments'} = $adjustments;
-    return;
+    return $self->{'_adjustments'} = $adjustments;
 }
 
 =head2 exclude_adjustment
