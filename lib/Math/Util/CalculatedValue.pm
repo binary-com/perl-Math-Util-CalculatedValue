@@ -4,7 +4,7 @@ use 5.006;
 use strict;
 use warnings FATAL => 'all';
 
-use Carp qw(confess);
+use Carp       qw(confess);
 use List::Util qw(min max);
 
 =head1 NAME
@@ -17,7 +17,7 @@ Represents an adjustment to a value (which can contain additional adjustments).
 
 =cut
 
-our $VERSION = '0.07';
+our $VERSION = '0.08';
 
 =head1 SYNOPSIS
 
@@ -147,7 +147,7 @@ New instance method
 =cut
 
 sub new {    ## no critic (ArgUnpacking)
-    my $class = shift;
+    my $class      = shift;
     my %params_ref = ref($_[0]) ? %{$_[0]} : @_;
 
     foreach my $required ('name', 'description', 'set_by') {
@@ -239,7 +239,7 @@ THis can be extremely dangerous, so make sure you know where and why you are doi
 sub exclude_adjustment {
     my ($self, $adj_name) = @_;
 
-    my $excluded = 0;
+    my $excluded    = 0;
     my $adjustments = $self->{'_adjustments'} || [];
     foreach my $sub_adj (@{$adjustments}) {
         my $obj = $sub_adj->[1];
@@ -272,7 +272,7 @@ sub replace_adjustment {
     confess 'Supplied replacement must be type of' . __PACKAGE__
         if !$replacement->{calculatedValue};
 
-    my $replaced = 0;
+    my $replaced    = 0;
     my $adjustments = $self->{'_adjustments'} || [];
     foreach my $sub_adj (@{$adjustments}) {
         my $obj = $sub_adj->[1];
@@ -291,7 +291,7 @@ sub replace_adjustment {
 
 # Loops through the ordered adjustments and performs the operation/adjustment
 sub _apply_all_adjustments {
-    my ($self) = @_;
+    my ($self)      = @_;
     my $value       = $self->{'base_amount'}  || 0;
     my $adjustments = $self->{'_adjustments'} || [];
     foreach my $adjustment (@{$adjustments}) {
