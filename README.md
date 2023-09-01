@@ -63,7 +63,7 @@ Represents an adjustment to a value (which can contain additional adjustments).
 
 - **maximum**
 
-    The maximum value for amount
+    The maximum value for the amount
 
 **METHODS**
 
@@ -77,7 +77,7 @@ Represents an adjustment to a value (which can contain additional adjustments).
 
 - **adjustments**
 
-    The ordered adjustments (if any) applied to arrive at the final value.
+    The ordered adjustments (if any) are applied to arrive at the final value.
 
 - **include_adjustment**
 
@@ -87,7 +87,7 @@ Represents an adjustment to a value (which can contain additional adjustments).
 
     Remove an adjustment by name.  Returns the number of instances found and excluded. Excluded items are changed into 'info' so that that still show up but are do not alter the parent value
 
-    THis can be extremely dangerous, so make sure you know where and why you are doing it.
+    This can be extremely dangerous, so make sure you know where and why you are doing it.
 
 - **replace_adjustment**
 
